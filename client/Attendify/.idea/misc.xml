@@ -10,8 +10,8 @@
         <entry key="app/src/main/res/drawable/ic_attendance.xml" value="0.1505" />
         <entry key="app/src/main/res/drawable/rectangle_2.xml" value="0.1505" />
         <entry key="app/src/main/res/drawable/round_rect.xml" value="0.1505" />
-        <entry key="app/src/main/res/layout/activity_home.xml" value="0.21875152587890628" />
-        <entry key="app/src/main/res/layout/activity_startup.xml" value="0.1505889892578125" />
+        <entry key="app/src/main/res/layout/activity_home.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/activity_startup.xml" value="0.159765625" />
       </map>
     </option>
   </component>

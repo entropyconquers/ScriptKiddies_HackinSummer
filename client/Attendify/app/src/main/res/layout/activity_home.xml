@@ -10,21 +10,22 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context=".home">
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_marginStart="29dp"
+        android:layout_marginTop="50dp"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:layout_width="30dp"
-            android:tint="@color/white"
             android:layout_height="30dp"
-            android:src="@drawable/attendance_icon" />
+            android:src="@drawable/attendance_icon"
+            app:tint="@color/white" />
 
         <TextView
             android:id="@+id/attendify"
@@ -32,10 +33,12 @@
             android:layout_height="25dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="5dp"
             android:gravity="top"
             android:text="@string/app_name"
-            android:textColor="@color/white"
-            android:textAppearance="@style/attendify" />
+            android:textAppearance="@style/attendify"
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -56,7 +59,7 @@
             android:layout_height="82dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:fontFamily="@font/rotaextrabold"
             android:gravity="top"
@@ -70,11 +73,12 @@
             android:id="@+id/imageView"
             android:layout_width="70dp"
             android:layout_height="70dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="32dp"
             android:src="@drawable/add1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imageView2"
-            app:layout_constraintHorizontal_bias="0.21"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/add_new_emp"
             app:layout_constraintVertical_bias="0.3" />
@@ -83,7 +87,7 @@
             android:id="@+id/imageView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
+            android:layout_marginEnd="10dp"
             android:src="@drawable/business3dcolleaguesstanding1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -105,7 +109,7 @@
             android:layout_height="82dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:fontFamily="@font/rotaextrabold"
             android:gravity="top"
@@ -119,12 +123,13 @@
             android:id="@+id/imageView3"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="32dp"
             android:src="@drawable/login1"
             android:translationY="-25dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imageView4"
-            app:layout_constraintHorizontal_bias="0.074"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/employee_entry" />
 
@@ -132,7 +137,7 @@
             android:id="@+id/imageView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
+            android:layout_marginEnd="40dp"
             android:src="@drawable/blackwomanheheheh"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -156,7 +161,7 @@
             android:layout_height="82dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:fontFamily="@font/rotaextrabold"
             android:gravity="top"
@@ -170,12 +175,13 @@
             android:id="@+id/imageView5"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="32dp"
             android:src="@drawable/logout1"
             android:translationY="-25dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imageView6"
-            app:layout_constraintHorizontal_bias="0.074"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/employee_exit" />
 
@@ -183,7 +189,7 @@
             android:id="@+id/imageView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
+            android:layout_marginEnd="30dp"
             android:src="@drawable/yellowshirtgirl"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
