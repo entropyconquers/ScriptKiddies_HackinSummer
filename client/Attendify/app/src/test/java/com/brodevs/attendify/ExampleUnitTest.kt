@@ -1,4 +1,4 @@
-package com.entropylabs.attendify
+package com.brodevs.attendify
 
 import org.junit.Test
 
