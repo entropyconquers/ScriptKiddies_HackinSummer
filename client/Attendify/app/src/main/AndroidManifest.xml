@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.brodevs.attendify">
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:allowBackup="true"
@@ -11,9 +15,18 @@
         android:theme="@style/Theme.Attendify">
         <activity
             android:name=".enter_details"
-            android:exported="false" />
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:exported="true" />
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:exported="true" />
         <activity
             android:name=".home"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,6 +36,8 @@
         </activity>
         <activity
             android:name=".Startup"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
             android:exported="true"></activity>
     </application>
 
