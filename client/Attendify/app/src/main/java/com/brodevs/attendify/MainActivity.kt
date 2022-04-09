@@ -104,10 +104,7 @@ class MainActivity : AppCompatActivity() {
 
         }
         setContentView(R.layout.activity_main)
-        var testButton: Button = findViewById(R.id.button2)
-        testButton.setOnClickListener {
-            stopCameraPreview()
-        }
+
         // Implementation of CameraX preview
 
         previewView = findViewById( R.id.preview_view )
