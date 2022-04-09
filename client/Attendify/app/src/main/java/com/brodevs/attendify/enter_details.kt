@@ -1,10 +1,9 @@
 package com.brodevs.attendify
 
+import android.R.attr.password
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.ContentUris
 import android.content.ContentValues.TAG
 import android.content.Intent
@@ -20,6 +19,7 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.util.Base64
 import android.util.Log
+import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +27,14 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.text.isDigitsOnly
+import com.android.volley.AuthFailureError
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -41,9 +49,93 @@ class enter_details : AppCompatActivity() {
     //Our widgets
     private lateinit var btnCapture: Button
     private lateinit var btnChoose : Button
+    lateinit var loadingView: View
     //Our constants
     private val OPERATION_CAPTURE_PHOTO = 1
     private val OPERATION_CHOOSE_PHOTO = 2
+
+    private fun sendPostRequest(
+        params: ArrayList<Pair<String, String>>,
+        apiLink: String
+    ) {
+        /*val postRequest: StringRequest = object : StringRequest(
+            Request.Method.POST, apiLink,
+            Response.Listener { s ->
+                Log.d(TAG, "Success $s")
+                try {
+                    val data = JSONObject(s)
+                    val dir = data.getString("dir")
+                    Log.d("dir", dir)
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            },
+            Response.ErrorListener { error -> Log.d(TAG, "Error response " + error.message) }) {
+            override fun getParams(): Map<String, String>? {
+                val param: MutableMap<String, String> = HashMap()
+                for(obj in params){
+                    param[obj.first] = obj.second
+                }
+                return param
+            }
+
+            @Throws(AuthFailureError::class)
+            override fun getHeaders(): Map<String, String> {
+                val params: MutableMap<String, String> = HashMap()
+                params["Content-Type"] = "application/x-www-form-urlencoded"
+                return params
+            }
+        }
+        val queue = Volley.newRequestQueue(this)
+        queue.add(postRequest)*/
+        val queue = Volley.newRequestQueue(this)
+        val jsonObject = JSONObject()
+
+        try {
+            for(obj in params) {
+                jsonObject.put(obj.first, obj.second)
+            }
+
+        } catch (e: JSONException) {
+            // handle exception
+            Log.i("json_error: ", "$e")
+        }
+
+        val putRequest: JsonObjectRequest =
+            object : JsonObjectRequest(
+                Method.POST, apiLink, jsonObject,
+                Response.Listener { response ->
+                    // response
+                    Log.i("response: ", "$response")
+                    loadingView.visibility = View.GONE
+                    val intent = Intent(this, home::class.java)
+                    startActivity(intent)
+                    finish()
+                },
+                Response.ErrorListener { error ->
+                    // error
+                    loadingView.visibility = View.GONE
+                    Toast.makeText(this, "error: "+ "$error", Toast.LENGTH_LONG).show()
+                    Log.i("error: ", "$error")
+                }
+            ) {
+
+                override fun getHeaders(): Map<String, String> {
+                    val headers: MutableMap<String, String> =
+                        HashMap()
+                    headers["Content-Type"] = "application/json"
+                    headers["Accept"] = "application/json"
+                    return headers
+                }
+
+                override fun getBody(): ByteArray {
+                    Log.i("json", jsonObject.toString())
+                    return jsonObject.toString().toByteArray(charset("UTF-8"))
+                }
+
+            }
+        queue.add(putRequest)
+    }
 
     private fun initializeWidgets() {
         btnCapture = findViewById(R.id.button3)
@@ -191,8 +283,9 @@ class enter_details : AppCompatActivity() {
         radioMale.isChecked = true
         var radioButtonID: Int = radioGroup.getCheckedRadioButtonId()
         var radioButton: RadioButton = radioGroup.findViewById(radioButtonID)
-
+        loadingView = findViewById(R.id.loading)
         val mButtonSave = findViewById<Button>(R.id.button);
+        loadingView.visibility = View.GONE
         /*
         val imageclick1 = findViewById<View>(R.id.addPhotoBtn);
         fun getPhotoFile(fileName: String): File {
@@ -257,10 +350,10 @@ class enter_details : AppCompatActivity() {
 
         mButtonSave.setOnClickListener{
             var name:String = ""
-            var designation:String
+            var designation:String =""
             var emp_num:String = ""
-            var gender:String
-            var address: String
+            var gender:String = ""
+            var address: String = ""
             var check: Boolean= true
 
             if(mEditText.text.toString().isNotEmpty()  ||  (mEditText.text.any {it in symbols})){
@@ -340,6 +433,7 @@ class enter_details : AppCompatActivity() {
                 check = false
             }
             if(check){
+                loadingView.visibility = View.VISIBLE
                 doAsync {
                     try {
                         val bitmap = faceImage
@@ -354,7 +448,16 @@ class enter_details : AppCompatActivity() {
                         // get base64 encoded string
                          val sImage = Base64.encodeToString(bytes, Base64.DEFAULT)
                         // set encoded text on textview
-                        
+                        var list: ArrayList<Pair<String,String>> = ArrayList()
+                        var p = Pair("name", name)
+                        list.add(p)
+                        list.add(Pair("designation",designation))
+                        list.add(Pair("gender",gender))
+                        list.add(Pair("address",address))
+                        list.add(Pair("employee_number",emp_num))
+                       // list.add(Pair("avatar",sImage))
+                        HttpsTrustManager.allowAllSSL();
+                        sendPostRequest(params = list, apiLink = "https://95i7arxys8.execute-api.ap-south-1.amazonaws.com/api/employee")
 
 
                     } catch (e: IOException) {
@@ -363,6 +466,8 @@ class enter_details : AppCompatActivity() {
 
                 }.execute()
                 //implement data entry
+
+
             }
 
 
@@ -373,6 +478,9 @@ class enter_details : AppCompatActivity() {
 
     }
 }
+
+
+
 
 fun getFileToByte(filePath: String?): String? {
     var bmp: Bitmap? = null

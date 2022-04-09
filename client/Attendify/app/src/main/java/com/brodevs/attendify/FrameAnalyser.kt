@@ -189,11 +189,12 @@ class FrameAnalyser( private var context: Context ,
                         }
                         if(bestScoreUserName!="Unknown"){
                             Handler(Looper.getMainLooper()).post(Runnable {
-                                MainActivity.stopCameraPreview()
+
+                                MainActivity.stopCameraPreview(context,bestScoreUserName)
                             })
 
                         }
-                        Logger.log( "Person identified as $bestScoreUserName" )
+                        Logger.log( "Employee Number: $bestScoreUserName" )
                         predictions.add(
                             Prediction(
                                 face.boundingBox,

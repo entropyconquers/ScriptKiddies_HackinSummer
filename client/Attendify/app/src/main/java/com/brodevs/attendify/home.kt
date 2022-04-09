@@ -62,7 +62,7 @@ class home : AppCompatActivity(), CoroutineScope by MainScope() {
         new_emp_btn.setOnClickListener {
             val intent = Intent(this, enter_details::class.java)
             startActivity(intent)
-            finish()
+            //finish()
         }
 
 
@@ -70,7 +70,15 @@ class home : AppCompatActivity(), CoroutineScope by MainScope() {
         entry_btn.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
 // To pass any data to next activity
-            intent.putExtra("keyIdentifier", "value")
+            intent.putExtra("keyIdentifier", "entry")
+// start your next activity
+            startActivity(intent)
+        }
+        var exit_btn: View = findViewById(R.id.frame_5)
+        exit_btn.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+// To pass any data to next activity
+            intent.putExtra("keyIdentifier", "exit")
 // start your next activity
             startActivity(intent)
         }

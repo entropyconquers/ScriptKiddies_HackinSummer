@@ -1,10 +1,9 @@
 
 package com.brodevs.attendify
-
+import android.location.LocationManager
 import android.Manifest
 import android.content.ContentValues.TAG
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -12,13 +11,11 @@ import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.DocumentsContract
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.util.Size
 import android.view.View
 import android.view.WindowInsets
-import android.widget.Button
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -31,14 +28,20 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LifecycleOwner
+import com.android.volley.Request
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.brodevs.attendify.model.FaceNetModel
 import com.brodevs.attendify.model.Models
 import com.google.common.util.concurrent.ListenableFuture
-
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.*
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.Executors
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -77,15 +80,71 @@ class MainActivity : AppCompatActivity() {
 
 
     companion object {
-
+        lateinit var indentifier: String
         lateinit var logTextView : TextView
+        lateinit var loadingView: View
+        lateinit var markedView: View
+        lateinit var markedTime: TextView
+        lateinit var empName: TextView
+        lateinit var markBtn: View
+        lateinit var markText: TextView
         lateinit var cameraProviderFuture : ListenableFuture<ProcessCameraProvider>
         fun setMessage( message : String ) {
             logTextView.text = message
         }
-        fun stopCameraPreview() {
+        fun buildMarkedView(context: Context, userData: JSONObject){
+            markedView.visibility = View.VISIBLE
+            logTextView.visibility = View.GONE
+            empName.text = userData["name"].toString()
+            val sdf = SimpleDateFormat("HH:mm")
+            val currentDate = sdf.format(Date())
+            markedTime.text = indentifier.uppercase() + " " +currentDate
+            markText.text = "Mark ${indentifier}"
+
+        }
+        fun getData(context: Context, userID:String) {
+            loadingView.visibility = View.VISIBLE
+            val queue = Volley.newRequestQueue(context)
+            val jsonObject = JSONObject()
+
+            try {
+
+                Log.d(TAG,"BONES:"+userID)
+                jsonObject.put("employee_number", userID)
+
+
+            } catch (e: JSONException) {
+                // handle exception
+                Log.i("json_error: ", "$e")
+            }
+            val apiLink = "https://95i7arxys8.execute-api.ap-south-1.amazonaws.com/api/employee?employee_number=${userID}"
+
+
+            HttpsTrustManager.allowAllSSL();
+
+
+            var obj = JSONObject()
+// Request a string response from the provided URL.
+            val stringRequest = StringRequest(Request.Method.GET, apiLink,
+                { response ->
+                    loadingView.visibility = View.GONE
+                    obj = JSONObject(response)
+                    buildMarkedView(context, obj)
+                    // Display the first 500 characters of the response string.
+                    Log.d(TAG,"Response is: ${response}")
+                },
+                {
+                    loadingView.visibility = View.GONE
+                })
+
+// Add the request to the RequestQueue.
+            queue.add(stringRequest)
+
+        }
+        fun stopCameraPreview(context: Context, userID: String) {
             val cameraProvider = cameraProviderFuture.get()
             cameraProvider.unbindAll()
+            getData(context, userID)
         }
 
     }
@@ -104,7 +163,23 @@ class MainActivity : AppCompatActivity() {
 
         }
         setContentView(R.layout.activity_main)
-
+        loadingView = findViewById(R.id.loading)
+        loadingView.visibility = View.GONE
+        markedView = findViewById(R.id.markLayout)
+        markBtn = findViewById(R.id.markBtn)
+        markText = findViewById(R.id.markText)
+        markedTime = findViewById(R.id.time)
+        empName = findViewById(R.id.emp_name)
+        val newString: String?
+        newString = if (savedInstanceState == null) {
+            val extras = intent.extras
+            extras?.getString("keyIdentifier")
+        } else {
+            savedInstanceState.getSerializable("keyIdentifier") as String?
+        }
+        if (newString != null) {
+            indentifier = newString
+        }
         // Implementation of CameraX preview
 
         previewView = findViewById( R.id.preview_view )
@@ -115,24 +190,28 @@ class MainActivity : AppCompatActivity() {
         //boundingBoxOverlay.setWillNotDraw( false )
         //boundingBoxOverlay.setZOrderOnTop( true )
 
-        faceNetModel = home.faceNetModel
-        frameAnalyser = FrameAnalyser( this , boundingBoxOverlay , home.faceNetModel)
-        fileReader = FileReader(home.faceNetModel)
 
+        doAsync {
+            faceNetModel = home.faceNetModel
+            frameAnalyser = FrameAnalyser( this , boundingBoxOverlay , home.faceNetModel)
+            fileReader = FileReader(home.faceNetModel)
+            sharedPreferences = getSharedPreferences( getString( R.string.app_name ) , Context.MODE_PRIVATE )
+            //isSerializedDataStored = sharedPreferences.getBoolean( SHARED_PREF_IS_DATA_STORED_KEY , false )
+            launchChooseDirectoryIntent()
+            if ( ActivityCompat.checkSelfPermission( this , Manifest.permission.CAMERA ) != PackageManager.PERMISSION_GRANTED ) {
+                requestCameraPermission()
+            }
+            else {
+                startCameraPreview()
+            }
+        }.execute()
 
         // We'll only require the CAMERA permission from the user.
         // For scoped storage, particularly for accessing documents, we won't require WRITE_EXTERNAL_STORAGE or
         // READ_EXTERNAL_STORAGE permissions. See https://developer.android.com/training/data-storage
-        if ( ActivityCompat.checkSelfPermission( this , Manifest.permission.CAMERA ) != PackageManager.PERMISSION_GRANTED ) {
-            requestCameraPermission()
-        }
-        else {
-            startCameraPreview()
-        }
 
-        sharedPreferences = getSharedPreferences( getString( R.string.app_name ) , Context.MODE_PRIVATE )
-        //isSerializedDataStored = sharedPreferences.getBoolean( SHARED_PREF_IS_DATA_STORED_KEY , false )
-        launchChooseDirectoryIntent()
+
+
         /*if ( !isSerializedDataStored ) {
 
             Logger.log( "No serialized data was found. Select the images directory.")
@@ -242,17 +321,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun launchChooseDirectoryIntent() {
         val destPath: String = applicationContext.getExternalFilesDir(null)!!.getAbsolutePath() + "/images/"
-        /*Log.d(TAG,"DESTPATH: "+destPath)
-        //var uri = Uri.fromFile( File(destPath))
-        val dirUri = it.data?.data ?: return@registerForActivityResult
-        //val dirUri = uri
-        Log.d(TAG,"DESTPATH: "+dirUri)
-        val childrenUri =
-            DocumentsContract.buildChildDocumentsUriUsingTree(
-                dirUri,
-                DocumentsContract.getTreeDocumentId( dirUri )
-            )
-        */
         val files = File(destPath).listFiles()
         val fileNames = arrayOfNulls<String>(files.size)
         files?.mapIndexed { index, item ->
@@ -272,6 +340,23 @@ class MainActivity : AppCompatActivity() {
         }
         Log.d(TAG,"DESTPATH: "+images)
         var errorFound = false
+        if ( !errorFound ) {
+            Log.d(TAG, "DISTPATH2: "+images.toString())
+            fileReader.run( images , fileReaderCallback )
+            //Logger.log( "Detecting faces in ${images.size} images ..." )
+        }
+    /*Log.d(TAG,"DESTPATH: "+destPath)
+        //var uri = Uri.fromFile( File(destPath))
+        val dirUri = it.data?.data ?: return@registerForActivityResult
+        //val dirUri = uri
+        Log.d(TAG,"DESTPATH: "+dirUri)
+        val childrenUri =
+            DocumentsContract.buildChildDocumentsUriUsingTree(
+                dirUri,
+                DocumentsContract.getTreeDocumentId( dirUri )
+            )
+        */
+
         /*
         if ( tree!!.listFiles().isNotEmpty()) {
             for ( doc in tree.listFiles() ) {
@@ -304,11 +389,7 @@ class MainActivity : AppCompatActivity() {
         }
         */
 
-        if ( !errorFound ) {
-            Log.d(TAG, "DISTPATH2: "+images.toString())
-            fileReader.run( images , fileReaderCallback )
-            Logger.log( "Detecting faces in ${images.size} images ..." )
-        }
+
         //val intent = Intent( Intent.ACTION_OPEN_DOCUMENT_TREE )
         // startForActivityResult is deprecated.
         // See this SO thread -> https://stackoverflow.com/questions/62671106/onactivityresult-method-is-deprecated-what-is-the-alternative
@@ -386,7 +467,7 @@ class MainActivity : AppCompatActivity() {
         if ( !errorFound ) {
             Log.d(TAG, "DISTPATH2: "+images.toString())
             fileReader.run( images , fileReaderCallback )
-            Logger.log( "Detecting faces in ${images.size} images ..." )
+            //Logger.log( "Detecting faces in ${images.size} images ..." )
         }
         else {
             /*val alertDialog = AlertDialog.Builder( this ).apply {
@@ -438,7 +519,7 @@ class MainActivity : AppCompatActivity() {
         override fun onProcessCompleted(data: ArrayList<Pair<String, FloatArray>>, numImagesWithNoFaces: Int) {
             frameAnalyser.faceList = data
             saveSerializedImageData( data )
-            Logger.log( "Images parsed. Found $numImagesWithNoFaces images with no faces." )
+            //Logger.log( "Images parsed. Found $numImagesWithNoFaces images with no faces." )
         }
     }
 
