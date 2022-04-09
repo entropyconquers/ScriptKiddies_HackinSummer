@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/colorPrimaryDark"
-    android:layout_height="1500dp">
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -57,7 +56,9 @@
 
         <EditText
             android:id="@+id/name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:layout_marginBottom="500dp"
@@ -80,23 +81,25 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/startBtn" />
+            app:layout_constraintTop_toBottomOf="@+id/addPhotoBtn" />
 
         <ImageView
             android:id="@+id/imageView7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            app:layout_constraintBottom_toBottomOf="@+id/startBtn"
-            app:layout_constraintEnd_toEndOf="@+id/startBtn"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/startBtn"
-            app:layout_constraintTop_toTopOf="@+id/startBtn"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/addPhotoBtn"
+            app:layout_constraintEnd_toEndOf="@+id/addPhotoBtn"
+            app:layout_constraintStart_toStartOf="@+id/addPhotoBtn"
+            app:layout_constraintTop_toTopOf="@+id/addPhotoBtn"
+            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/adduser" />
 
         <EditText
             android:id="@+id/designation"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:width="350dp"
@@ -123,10 +126,12 @@
 
         <EditText
             android:id="@+id/employee_no"
-            android:layout_width="wrap_content"
+
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:width="350dp"
+            android:layout_width="match_parent"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
 
             android:background="@drawable/rounded_edittext"
             android:elevation="0dp"
@@ -150,11 +155,13 @@
 
         <EditText
             android:id="@+id/address"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
 
-            android:width="350dp"
+
             android:background="@drawable/rounded_edittext"
             android:elevation="0dp"
             android:ems="10"
@@ -180,14 +187,15 @@
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Gender"
+            android:layout_marginStart="20dp"
             android:fontFamily="@font/rotaextrabold"
+            android:text="Gender"
             android:textColor="#86ffffff"
             android:textSize="25sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/linearLayout"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/address"
             app:layout_constraintVertical_bias="0.123" />
 
@@ -195,8 +203,8 @@
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Save"
             android:fontFamily="@font/rotaextrabold"
+            android:text="Save"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -205,18 +213,23 @@
             app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
         <View
-            android:id="@+id/startBtn"
-            android:layout_width="352dp"
-            android:layout_height="110dp"
+            android:id="@+id/addPhotoBtn"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="30dp"
+
+            android:layout_marginEnd="20dp"
+
             android:background="@drawable/ic_rectangle_1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView"
             app:layout_constraintVertical_bias="0.0"></View>
+
         <RadioGroup
             android:id="@+id/radioGroup"
             android:layout_width="wrap_content"
@@ -259,14 +272,49 @@
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="add photo"
             android:fontFamily="@font/rotaextrabold"
+            android:text="add photo"
             android:textColor="#86ffffff"
             android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="@+id/startBtn"
-            app:layout_constraintEnd_toEndOf="@+id/startBtn"
-            app:layout_constraintStart_toStartOf="@+id/startBtn"
-            app:layout_constraintTop_toTopOf="@+id/startBtn" />
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/addPhotoBtn"
+            app:layout_constraintEnd_toEndOf="@+id/addPhotoBtn"
+            app:layout_constraintStart_toStartOf="@+id/addPhotoBtn"
+            app:layout_constraintTop_toTopOf="@+id/addPhotoBtn" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/ic_rectangle_1"
+            android:fontFamily="@font/rotamedium"
+            android:text="Add from gallery"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/addPhotoBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/addPhotoBtn"
+            app:layout_constraintTop_toBottomOf="@+id/imageView7"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/ic_rectangle_1"
+            android:fontFamily="@font/rotamedium"
+            android:text="Add from camera"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@+id/addPhotoBtn"
+            app:layout_constraintEnd_toEndOf="@+id/addPhotoBtn"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/button2"
+            app:layout_constraintTop_toBottomOf="@+id/imageView7"
+            app:layout_constraintVertical_bias="0.0" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -72,14 +72,14 @@
             android:text="@string/startup_headline"
             android:textAppearance="@style/startup_headline"
             android:textSize="30sp"
-            app:layout_constraintBottom_toTopOf="@+id/startBtn"
+            app:layout_constraintBottom_toTopOf="@+id/addPhotoBtn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/startBtn"
+            app:layout_constraintStart_toStartOf="@+id/addPhotoBtn"
             app:layout_constraintTop_toTopOf="parent" />
 
         <View
-            android:id="@+id/startBtn"
+            android:id="@+id/addPhotoBtn"
             android:layout_width="0dp"
             android:layout_height="66dp"
             android:layout_alignParentLeft="true"
@@ -101,10 +101,10 @@
             android:fontFamily="@font/rotablack"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="20dp"
-            app:layout_constraintBottom_toBottomOf="@+id/startBtn"
-            app:layout_constraintEnd_toEndOf="@+id/startBtn"
-            app:layout_constraintStart_toStartOf="@+id/startBtn"
-            app:layout_constraintTop_toTopOf="@+id/startBtn" />
+            app:layout_constraintBottom_toBottomOf="@+id/addPhotoBtn"
+            app:layout_constraintEnd_toEndOf="@+id/addPhotoBtn"
+            app:layout_constraintStart_toStartOf="@+id/addPhotoBtn"
+            app:layout_constraintTop_toTopOf="@+id/addPhotoBtn" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,10 +14,11 @@
         <entry key="app/src/main/res/drawable/round_rect.xml" value="0.1505" />
         <entry key="app/src/main/res/drawable/round_rect_stroke.xml" value="0.1825" />
         <entry key="app/src/main/res/drawable/rounded_edittext.xml" value="0.1825" />
-        <entry key="app/src/main/res/layout/activity_enter_details.xml" value="0.165" />
+        <entry key="app/src/main/res/layout/activity_enter_details.xml" value="0.24919577361531337" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.13817567567567568" />
         <entry key="app/src/main/res/layout/activity_startup.xml" value="0.159765625" />
+        <entry key="app/src/main/res/xml/file_paths.xml" value="0.1" />
       </map>
     </option>
   </component>

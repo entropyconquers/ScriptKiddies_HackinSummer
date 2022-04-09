@@ -7,6 +7,7 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.brodevs.attendify.model.FaceNetModel
 import com.brodevs.attendify.model.Models
@@ -57,7 +58,12 @@ class home : AppCompatActivity(), CoroutineScope by MainScope() {
             }.execute()
 
         }
-
+        var new_emp_btn:View = findViewById(R.id.frame_2)
+        new_emp_btn.setOnClickListener {
+            val intent = Intent(this, enter_details::class.java)
+            startActivity(intent)
+            finish()
+        }
 
 
         var entry_btn: View = findViewById(R.id.frame_3)
