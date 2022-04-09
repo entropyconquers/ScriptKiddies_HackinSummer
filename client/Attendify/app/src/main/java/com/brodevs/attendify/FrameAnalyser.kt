@@ -17,6 +17,8 @@ package com.brodevs.attendify
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -26,13 +28,14 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Map
 import kotlin.math.pow
 import kotlin.math.sqrt
+
 
 // Analyser class to process frames and produce detections.
 class FrameAnalyser( private var context: Context ,
@@ -179,6 +182,12 @@ class FrameAnalyser( private var context: Context ,
                             else {
                                 names[ avgScores.indexOf( avgScores.minOrNull()!! ) ]
                             }
+                        }
+                        if(bestScoreUserName!="Unknown"){
+                            Handler(Looper.getMainLooper()).post(Runnable {
+                                MainActivity.stopCameraPreview()
+                            })
+
                         }
                         Logger.log( "Person identified as $bestScoreUserName" )
                         predictions.add(

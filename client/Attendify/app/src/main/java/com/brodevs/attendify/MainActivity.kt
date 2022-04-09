@@ -18,6 +18,7 @@ import android.util.Log
 import android.util.Size
 import android.view.View
 import android.view.WindowInsets
+import android.widget.Button
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -54,7 +55,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var frameAnalyser  : FrameAnalyser
     private lateinit var faceNetModel : FaceNetModel
     private lateinit var fileReader : FileReader
-    private lateinit var cameraProviderFuture : ListenableFuture<ProcessCameraProvider>
+
     private lateinit var sharedPreferences: SharedPreferences
 
     // <----------------------- User controls --------------------------->
@@ -78,9 +79,13 @@ class MainActivity : AppCompatActivity() {
     companion object {
 
         lateinit var logTextView : TextView
-
+        lateinit var cameraProviderFuture : ListenableFuture<ProcessCameraProvider>
         fun setMessage( message : String ) {
             logTextView.text = message
+        }
+        fun stopCameraPreview() {
+            val cameraProvider = cameraProviderFuture.get()
+            cameraProvider.unbindAll()
         }
 
     }
@@ -99,7 +104,10 @@ class MainActivity : AppCompatActivity() {
 
         }
         setContentView(R.layout.activity_main)
-
+        var testButton: Button = findViewById(R.id.button2)
+        testButton.setOnClickListener {
+            stopCameraPreview()
+        }
         // Implementation of CameraX preview
 
         previewView = findViewById( R.id.preview_view )
@@ -157,6 +165,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     // ---------------------------------------------- //
+
+
 
     // Attach the camera stream to the PreviewView.
     private fun startCameraPreview() {

@@ -1,17 +1,28 @@
 package com.brodevs.attendify
 
+import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.brodevs.attendify.model.FaceNetModel
 import com.brodevs.attendify.model.Models
+import kotlinx.coroutines.*
 
 
-class home : AppCompatActivity() {
+class doAsync(val handler: () -> Unit) : AsyncTask<Void, Void, Void>() {
+    override fun doInBackground(vararg params: Void?): Void? {
+        handler()
+        return null
+    }
+}
+class home : AppCompatActivity(), CoroutineScope by MainScope() {
     companion object {
 
-        public lateinit var faceNetModel : FaceNetModel
+        lateinit var faceNetModel : FaceNetModel
     }
     // <----------------------- User controls --------------------------->
 
@@ -30,8 +41,25 @@ class home : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
-        faceNetModel = FaceNetModel( this , modelInfo , useGpu , useXNNPack )
+        var sharedPreferences = getSharedPreferences( "attendify" , Context.MODE_PRIVATE )
+        var firstTime = sharedPreferences.getBoolean( "first_time" , true )
+
+        if(firstTime){
+
+            val intent = Intent(this, Startup::class.java)
+            startActivity(intent)
+            //finish()
+        }
+        else{
+            setContentView(R.layout.activity_home)
+            doAsync {
+                faceNetModel = FaceNetModel( applicationContext , modelInfo , useGpu , useXNNPack )
+            }.execute()
+
+        }
+
+
+
         var entry_btn: View = findViewById(R.id.frame_3)
         entry_btn.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)

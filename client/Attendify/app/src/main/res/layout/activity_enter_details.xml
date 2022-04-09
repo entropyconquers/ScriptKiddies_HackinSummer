@@ -80,18 +80,18 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rectangle_2" />
+            app:layout_constraintTop_toBottomOf="@+id/startBtn" />
 
         <ImageView
             android:id="@+id/imageView7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
-            app:layout_constraintBottom_toBottomOf="@+id/rectangle_2"
-            app:layout_constraintEnd_toEndOf="@+id/rectangle_2"
+            app:layout_constraintBottom_toBottomOf="@+id/startBtn"
+            app:layout_constraintEnd_toEndOf="@+id/startBtn"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/rectangle_2"
-            app:layout_constraintTop_toTopOf="@+id/rectangle_2"
+            app:layout_constraintStart_toStartOf="@+id/startBtn"
+            app:layout_constraintTop_toTopOf="@+id/startBtn"
             app:srcCompat="@drawable/adduser" />
 
         <EditText
@@ -205,7 +205,7 @@
             app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
         <View
-            android:id="@+id/rectangle_2"
+            android:id="@+id/startBtn"
             android:layout_width="352dp"
             android:layout_height="110dp"
             android:layout_alignParentLeft="true"
@@ -263,10 +263,10 @@
             android:fontFamily="@font/rotaextrabold"
             android:textColor="#86ffffff"
             android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="@+id/rectangle_2"
-            app:layout_constraintEnd_toEndOf="@+id/rectangle_2"
-            app:layout_constraintStart_toStartOf="@+id/rectangle_2"
-            app:layout_constraintTop_toTopOf="@+id/rectangle_2" />
+            app:layout_constraintBottom_toBottomOf="@+id/startBtn"
+            app:layout_constraintEnd_toEndOf="@+id/startBtn"
+            app:layout_constraintStart_toStartOf="@+id/startBtn"
+            app:layout_constraintTop_toTopOf="@+id/startBtn" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
