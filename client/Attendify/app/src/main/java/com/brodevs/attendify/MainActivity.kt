@@ -1,9 +1,10 @@
 
 package com.brodevs.attendify
-import android.location.LocationManager
+
 import android.Manifest
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -17,6 +18,7 @@ import android.util.Size
 import android.view.View
 import android.view.WindowInsets
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
@@ -30,6 +32,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.brodevs.attendify.model.FaceNetModel
@@ -41,7 +45,6 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
-import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -88,6 +91,7 @@ class MainActivity : AppCompatActivity() {
         lateinit var empName: TextView
         lateinit var markBtn: View
         lateinit var markText: TextView
+        lateinit var empNo: String
         lateinit var cameraProviderFuture : ListenableFuture<ProcessCameraProvider>
         fun setMessage( message : String ) {
             logTextView.text = message
@@ -102,7 +106,11 @@ class MainActivity : AppCompatActivity() {
             markText.text = "Mark ${indentifier}"
 
         }
+
+
+
         fun getData(context: Context, userID:String) {
+            empNo = userID
             loadingView.visibility = View.VISIBLE
             val queue = Volley.newRequestQueue(context)
             val jsonObject = JSONObject()
@@ -149,6 +157,91 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    private var gpsTracker: GpsTracker? = null
+    fun getLocation(): Pair<String, String>? {
+        val p : Pair<String,String>?
+        gpsTracker = GpsTracker(this@MainActivity)
+        if (gpsTracker!!.canGetLocation()) {
+            val latitude = gpsTracker!!.getLatitude()
+            val longitude = gpsTracker!!.getLongitude()
+
+            Log.d(TAG,"lat:"+latitude)
+            Log.d(TAG,"long:"+longitude)
+            p = Pair(latitude.toString(),longitude.toString())
+            return p
+        } else {
+            gpsTracker!!.showSettingsAlert()
+        }
+        return null
+    }
+    fun goHome(){
+        val intent = Intent(this, home::class.java)
+        startActivity(intent)
+        finish()
+    }
+    fun sendPostRequest  (
+        params: ArrayList<Pair<String, String>>,
+        apiLink: String
+    ) {
+        var res: String = ""
+        loadingView.visibility = View.VISIBLE
+        val queue = Volley.newRequestQueue(this)
+        val jsonObject = JSONObject()
+
+        try {
+            for(obj in params) {
+                jsonObject.put(obj.first, obj.second)
+            }
+
+        } catch (e: JSONException) {
+            // handle exception
+            Log.i("json_error: ", "$e")
+        }
+
+        val putRequest: JsonObjectRequest =
+            object : JsonObjectRequest(
+                Method.POST, apiLink, jsonObject,
+                Response.Listener { response ->
+                    // response
+                    Log.i("response: ", "$response")
+                    loadingView.visibility = View.GONE
+                    var obj = JSONObject(response.toString())
+                    if(obj["success"] as Boolean){
+                        Toast.makeText(this, "Successfully recorded ${indentifier} time", Toast.LENGTH_LONG).show()
+                        goHome()
+                    }
+                    else{
+                        Toast.makeText(this, obj["message"].toString(), Toast.LENGTH_LONG).show()
+                        goHome()
+                    }
+                    //val intent = Intent(this, home::class.java)
+                    //startActivity(intent)
+                    //finish()
+                },
+                Response.ErrorListener { error ->
+                    // error
+                    loadingView.visibility = View.GONE
+                    Toast.makeText(this, "error: "+ "$error", Toast.LENGTH_LONG).show()
+                    Log.i("error: ", "$error")
+                }
+            ) {
+
+                override fun getHeaders(): Map<String, String> {
+                    val headers: MutableMap<String, String> =
+                        HashMap()
+                    headers["Content-Type"] = "application/json"
+                    headers["Accept"] = "application/json"
+                    return headers
+                }
+
+                override fun getBody(): ByteArray {
+                    Log.i("json", jsonObject.toString())
+                    return jsonObject.toString().toByteArray(charset("UTF-8"))
+                }
+
+            }
+        queue.add(putRequest)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -163,6 +256,13 @@ class MainActivity : AppCompatActivity() {
 
         }
         setContentView(R.layout.activity_main)
+        val REQUEST_LOCATION = 1
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            REQUEST_LOCATION
+        )
+
         loadingView = findViewById(R.id.loading)
         loadingView.visibility = View.GONE
         markedView = findViewById(R.id.markLayout)
@@ -190,7 +290,48 @@ class MainActivity : AppCompatActivity() {
         //boundingBoxOverlay.setWillNotDraw( false )
         //boundingBoxOverlay.setZOrderOnTop( true )
 
+        markBtn.setOnClickListener {
+            var p = getLocation()
+            if(p==null){
+                Toast.makeText(this,"Can't fetch location", Toast.LENGTH_SHORT).show()
+                goHome()
+            }
+            else{
+                loadingView.visibility = View.VISIBLE
+                val queue = Volley.newRequestQueue(this)
+                val apiLink = "https://95i7arxys8.execute-api.ap-south-1.amazonaws.com/api/employee/verify?employee_number=${empNo}&user_latitude=${p.first}0&user_longitude=${p.second}"
 
+
+                HttpsTrustManager.allowAllSSL();
+
+
+                var obj = JSONObject()
+// Request a string response from the provided URL.
+                val stringRequest = StringRequest(Request.Method.GET, apiLink,
+                    { response ->
+                        loadingView.visibility = View.GONE
+                        obj = JSONObject(response)
+                        if(obj["valid"] as Boolean){
+                            var list: ArrayList<Pair<String,String>> = ArrayList()
+                            list.add(Pair("employee_number", empNo))
+                            sendPostRequest(list,"https://95i7arxys8.execute-api.ap-south-1.amazonaws.com/api/employee/${indentifier}")
+                        }
+                        else{
+                            Toast.makeText(this,"Address not within 100m range", Toast.LENGTH_SHORT).show()
+                            goHome()
+                        }
+                        // Display the first 500 characters of the response string.
+                        Log.d(TAG,"Response is: ${response}")
+                    },
+                    {
+                        loadingView.visibility = View.GONE
+                    })
+
+// Add the request to the RequestQueue.
+                queue.add(stringRequest)
+            }
+
+        }
         doAsync {
             faceNetModel = home.faceNetModel
             frameAnalyser = FrameAnalyser( this , boundingBoxOverlay , home.faceNetModel)
