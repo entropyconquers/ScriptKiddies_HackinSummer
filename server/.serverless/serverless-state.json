@@ -180,7 +180,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/laravel/dev/1649506593471-2022-04-09T12:16:33.471Z/laravel.zip"
+                "S3Key": "serverless/laravel/dev/1649547787583-2022-04-09T23:43:07.583Z/laravel.zip"
               },
               "Handler": "public/index.php",
               "Runtime": "provided.al2",
@@ -208,7 +208,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/laravel/dev/1649506593471-2022-04-09T12:16:33.471Z/laravel.zip"
+                "S3Key": "serverless/laravel/dev/1649547787583-2022-04-09T23:43:07.583Z/laravel.zip"
               },
               "Handler": "artisan",
               "Runtime": "provided.al2",
@@ -230,24 +230,24 @@
               "ArtisanLogGroup"
             ]
           },
-          "WebLambdaVersion6LTSnfMxVOerrgbiCXwYS4ON9hQ7vD2yWgoWECqdyE": {
+          "WebLambdaVersionBgH5GSEMJcs6997PpeyHIA5DpTY3D55JohAOWqKL4pw": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "WebLambdaFunction"
               },
-              "CodeSha256": "nvJ/9wtXiMek51MzL0R6pCgkFTH7EBXmyJiEuxSqLvs="
+              "CodeSha256": "gVJ2aj/FMEe9GAKNYnubtQKZf2zrmIcnd945Vdxh4Gg="
             }
           },
-          "ArtisanLambdaVersionw2Oq6K0XjzFSegD7L7HgtQYScgnBhmO8UbvfpvA": {
+          "ArtisanLambdaVersionfB0q2hAicp8eQxhvNZXF2VOnKqd5jEGtVjncU3gmo4": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ArtisanLambdaFunction"
               },
-              "CodeSha256": "nvJ/9wtXiMek51MzL0R6pCgkFTH7EBXmyJiEuxSqLvs="
+              "CodeSha256": "gVJ2aj/FMEe9GAKNYnubtQKZf2zrmIcnd945Vdxh4Gg="
             }
           },
           "HttpApi": {
@@ -355,7 +355,7 @@
           "WebLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "WebLambdaVersion6LTSnfMxVOerrgbiCXwYS4ON9hQ7vD2yWgoWECqdyE"
+              "Ref": "WebLambdaVersionBgH5GSEMJcs6997PpeyHIA5DpTY3D55JohAOWqKL4pw"
             },
             "Export": {
               "Name": "sls-laravel-dev-WebLambdaFunctionQualifiedArn"
@@ -364,7 +364,7 @@
           "ArtisanLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ArtisanLambdaVersionw2Oq6K0XjzFSegD7L7HgtQYScgnBhmO8UbvfpvA"
+              "Ref": "ArtisanLambdaVersionfB0q2hAicp8eQxhvNZXF2VOnKqd5jEGtVjncU3gmo4"
             },
             "Export": {
               "Name": "sls-laravel-dev-ArtisanLambdaFunctionQualifiedArn"
@@ -515,7 +515,7 @@
         "memory": 1024,
         "runtime": "provided.al2",
         "vpc": {},
-        "versionLogicalId": "WebLambdaVersion6LTSnfMxVOerrgbiCXwYS4ON9hQ7vD2yWgoWECqdyE"
+        "versionLogicalId": "WebLambdaVersionBgH5GSEMJcs6997PpeyHIA5DpTY3D55JohAOWqKL4pw"
       },
       "artisan": {
         "handler": "artisan",
@@ -529,7 +529,7 @@
         "memory": 1024,
         "runtime": "provided.al2",
         "vpc": {},
-        "versionLogicalId": "ArtisanLambdaVersionw2Oq6K0XjzFSegD7L7HgtQYScgnBhmO8UbvfpvA"
+        "versionLogicalId": "ArtisanLambdaVersionfB0q2hAicp8eQxhvNZXF2VOnKqd5jEGtVjncU3gmo4"
       }
     },
     "configValidationMode": "warn",
@@ -548,7 +548,7 @@
           "!tests/**"
         ],
         "artifact": "/Users/g2dgaming/MyProjects/ScriptKiddies_HackinSummer/server/.serverless/laravel.zip",
-        "artifactDirectoryName": "serverless/laravel/dev/1649506593471-2022-04-09T12:16:33.471Z"
+        "artifactDirectoryName": "serverless/laravel/dev/1649547787583-2022-04-09T23:43:07.583Z"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
@@ -562,7 +562,7 @@
     "artifact": "/Users/g2dgaming/MyProjects/ScriptKiddies_HackinSummer/server/.serverless/laravel.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/laravel/dev/1649506593471-2022-04-09T12:16:33.471Z",
+    "artifactDirectoryName": "serverless/laravel/dev/1649547787583-2022-04-09T23:43:07.583Z",
     "artifact": "laravel.zip"
   }
 }

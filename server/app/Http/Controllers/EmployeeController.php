@@ -16,7 +16,7 @@ class EmployeeController extends Controller
             'designation'=>'required|max:50',
             'gender'    => 'required|max:255',
             'address' => 'required|max:512', 
-            'employee_number'    =>'required'
+            'employee_number'    =>'required',
 
         ]);
         if($validator->fails()){
@@ -31,7 +31,10 @@ class EmployeeController extends Controller
         $employee->address=$validated['address'];
         $employee->id=$validated['employee_number'];        
         if(isset($request['avatar'])){
-            $employee->avatar=$validated['avatar'];
+            $employee->avatar=$request['avatar'];
+        }        
+        if(isset($request['android_id'])){
+            $employee->android_id=$request['android_id'];
         }        
         $saved=$employee->save();
         return response()->json([
@@ -39,7 +42,13 @@ class EmployeeController extends Controller
         ]);
     }
     public function get(Request $request){
-        return response()->json(Employee::find($request['employee_number']));
+        if(isset($request['employee_number'])){
+            $employee=Employee::find($request['employee_number']);
+        }
+        else if(isset($request['android_id'])){
+            $employee=Employee::where('android_id',$request['android_id'])->first();     
+        }        
+        return response()->json($employee);
     }
     public function check(Request $request){
         $user_latitude=$request['user_latitude'];
