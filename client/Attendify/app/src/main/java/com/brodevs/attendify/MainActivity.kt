@@ -17,6 +17,7 @@ import android.util.Log
 import android.util.Size
 import android.view.View
 import android.view.WindowInsets
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -38,6 +39,12 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.brodevs.attendify.model.FaceNetModel
 import com.brodevs.attendify.model.Models
+import com.budiyev.android.codescanner.AutoFocusMode
+import com.budiyev.android.codescanner.CodeScanner
+import com.budiyev.android.codescanner.CodeScannerView
+import com.budiyev.android.codescanner.DecodeCallback
+import com.budiyev.android.codescanner.ErrorCallback
+import com.budiyev.android.codescanner.ScanMode
 import com.google.common.util.concurrent.ListenableFuture
 import org.json.JSONException
 import org.json.JSONObject
@@ -61,7 +68,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var frameAnalyser  : FrameAnalyser
     private lateinit var faceNetModel : FaceNetModel
     private lateinit var fileReader : FileReader
-
+    private var scanResult: String? = null
     private lateinit var sharedPreferences: SharedPreferences
 
     // <----------------------- User controls --------------------------->
@@ -154,6 +161,12 @@ class MainActivity : AppCompatActivity() {
             cameraProvider.unbindAll()
             getData(context, userID)
         }
+        fun stopCameraPreview() {
+            val cameraProvider = cameraProviderFuture.get()
+            cameraProvider.unbindAll()
+
+        }
+
 
     }
 
@@ -242,6 +255,7 @@ class MainActivity : AppCompatActivity() {
             }
         queue.add(putRequest)
     }
+    private lateinit var codeScanner: CodeScanner
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -259,7 +273,7 @@ class MainActivity : AppCompatActivity() {
         val REQUEST_LOCATION = 1
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.CAMERA),
             REQUEST_LOCATION
         )
 
@@ -289,7 +303,83 @@ class MainActivity : AppCompatActivity() {
          val boundingBoxOverlay = findViewById<BoundingBoxOverlay>( R.id.bbox_overlay )
         //boundingBoxOverlay.setWillNotDraw( false )
         //boundingBoxOverlay.setZOrderOnTop( true )
+        var altAuthSetupBtn: Button = findViewById(R.id.altAuth)
+        val scannerView = findViewById<CodeScannerView>(R.id.scanner_view)
+        val backButton:Button = findViewById(R.id.back)
+        backButton.setOnClickListener {
+            scannerView.visibility = View.GONE
+            backButton.visibility = View.GONE
+        }
 
+        altAuthSetupBtn.setOnClickListener {
+            scannerView.visibility = View.VISIBLE
+            backButton.visibility = View.VISIBLE
+            try {
+                codeScanner = CodeScanner(this, scannerView)
+            }
+            catch (e: Exception) {
+                // handler
+            }
+
+            // Parameters (default values)
+            codeScanner.camera = CodeScanner.CAMERA_BACK // or CAMERA_FRONT or specific camera id
+            codeScanner.formats = CodeScanner.ALL_FORMATS // list of type BarcodeFormat,
+            // ex. listOf(BarcodeFormat.QR_CODE)
+            codeScanner.autoFocusMode = AutoFocusMode.SAFE // or CONTINUOUS
+            codeScanner.scanMode = ScanMode.SINGLE // or CONTINUOUS or PREVIEW
+            codeScanner.isAutoFocusEnabled = true // Whether to enable auto focus or not
+            codeScanner.isFlashEnabled = false // Whether to enable flash or not
+
+            // Callbacks
+            codeScanner.decodeCallback = DecodeCallback {
+                runOnUiThread {
+                    loadingView.visibility = View.VISIBLE
+                    Toast.makeText(this, "Scan successful", Toast.LENGTH_LONG).show()
+                    var num = it.text.toString().substring(it.text.toString().length-1).toIntOrNull()
+                    Log.d(TAG, "NUM:: $num")
+                    Log.d(TAG, "STR:: ${it.text.toString().substring(num!!,it.text.toString().length-1)}")
+                    scanResult = it.text.toString().substring(num!!,it.text.toString().length-1)
+                    val apiLink = "https://95i7arxys8.execute-api.ap-south-1.amazonaws.com/api/employee?android_id=${scanResult}"
+                    stopCameraPreview()
+
+                    HttpsTrustManager.allowAllSSL();
+
+                    val queue = Volley.newRequestQueue(this)
+                    val jsonObject = JSONObject()
+                    var obj = JSONObject()
+// Request a string response from the provided URL.
+                    val stringRequest = StringRequest(Request.Method.GET, apiLink,
+                        { response ->
+                            loadingView.visibility = View.GONE
+                            obj = JSONObject(response)
+                            Log.d(TAG,"Response is: ${response}")
+                            empNo = obj["id"].toString()
+                            buildMarkedView(this, obj)
+                            // Display the first 500 characters of the response string.
+
+                        },
+                        {
+                            loadingView.visibility = View.GONE
+                        })
+
+// Add the request to the RequestQueue.
+                    queue.add(stringRequest)
+
+                    scannerView.visibility = View.GONE
+                    altAuthSetupBtn.visibility = View.GONE
+
+                }
+            }
+            codeScanner.errorCallback = ErrorCallback { // or ErrorCallback.SUPPRESS
+                runOnUiThread {
+                    Toast.makeText(this, "Camera initialization error: ${it.message}",
+                        Toast.LENGTH_LONG).show()
+                    scannerView.visibility = View.GONE
+                }
+            }
+            codeScanner.startPreview()
+
+        }
         markBtn.setOnClickListener {
             var p = getLocation()
             if(p==null){

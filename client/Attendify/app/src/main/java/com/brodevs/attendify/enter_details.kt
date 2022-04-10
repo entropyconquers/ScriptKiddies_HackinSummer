@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.ContentUris
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -28,6 +29,7 @@ import androidx.core.text.isDigitsOnly
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
+import com.budiyev.android.codescanner.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.*
@@ -41,6 +43,7 @@ class enter_details : AppCompatActivity() {
     private var mImageView: ImageView? = null
     private var mUri: Uri? = null
     private var faceImage: Bitmap? = null
+    private var scanResult: String? = null
     //Our widgets
     private lateinit var btnCapture: Button
     private lateinit var btnChoose : Button
@@ -102,6 +105,11 @@ class enter_details : AppCompatActivity() {
                 Response.Listener { response ->
                     // response
                     Log.i("response: ", "$response")
+                    var obj = JSONObject(response.toString())
+                    if(obj["success"] as Boolean){
+                        Toast.makeText(this, "Added successfully", Toast.LENGTH_LONG).show()
+
+                    }
                     loadingView.visibility = View.GONE
                     val intent = Intent(this, home::class.java)
                     startActivity(intent)
@@ -261,7 +269,7 @@ class enter_details : AppCompatActivity() {
     }
 
 
-
+    private lateinit var codeScanner: CodeScanner
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -319,7 +327,50 @@ class enter_details : AppCompatActivity() {
         }
         */
         initializeWidgets()
+        var altAuthSetupBtn: Button = findViewById(R.id.altAuthSetupBtn)
+        val scannerView = findViewById<CodeScannerView>(R.id.scanner_view)
 
+        altAuthSetupBtn.setOnClickListener {
+            scannerView.visibility = View.VISIBLE
+            try {
+                codeScanner = CodeScanner(this, scannerView)
+            }
+            catch (e: Exception) {
+                // handler
+            }
+
+            // Parameters (default values)
+            codeScanner.camera = CodeScanner.CAMERA_BACK // or CAMERA_FRONT or specific camera id
+            codeScanner.formats = CodeScanner.ALL_FORMATS // list of type BarcodeFormat,
+            // ex. listOf(BarcodeFormat.QR_CODE)
+            codeScanner.autoFocusMode = AutoFocusMode.SAFE // or CONTINUOUS
+            codeScanner.scanMode = ScanMode.SINGLE // or CONTINUOUS or PREVIEW
+            codeScanner.isAutoFocusEnabled = true // Whether to enable auto focus or not
+            codeScanner.isFlashEnabled = false // Whether to enable flash or not
+
+            // Callbacks
+            codeScanner.decodeCallback = DecodeCallback {
+                runOnUiThread {
+
+                    Toast.makeText(this, "Scan successful", Toast.LENGTH_LONG).show()
+                    var num = it.text.toString().substring(it.text.toString().length-1).toIntOrNull()
+                    Log.d(TAG, "NUM:: $num")
+                    Log.d(TAG, "STR:: ${it.text.toString().substring(num!!,it.text.toString().length-1)}")
+                    scanResult = it.text.toString().substring(num!!,it.text.toString().length-1)
+                    scannerView.visibility = View.GONE
+                    altAuthSetupBtn.visibility = View.GONE
+                }
+            }
+            codeScanner.errorCallback = ErrorCallback { // or ErrorCallback.SUPPRESS
+                runOnUiThread {
+                    Toast.makeText(this, "Camera initialization error: ${it.message}",
+                        Toast.LENGTH_LONG).show()
+                    scannerView.visibility = View.GONE
+                }
+            }
+            codeScanner.startPreview()
+
+        }
         btnCapture.setOnClickListener{
             REQUEST_CODE = 1
             capturePhoto()
@@ -427,6 +478,13 @@ class enter_details : AppCompatActivity() {
             else {
                 check = false
             }
+            if(scanResult!=null){
+
+            }
+            else{
+                check = false
+                Toast.makeText(applicationContext, "Setup Alternate authentication", Toast.LENGTH_SHORT).show()
+            }
             if(check){
                 loadingView.visibility = View.VISIBLE
                 doAsync {
@@ -450,6 +508,7 @@ class enter_details : AppCompatActivity() {
                         list.add(Pair("gender",gender))
                         list.add(Pair("address",address))
                         list.add(Pair("employee_number",emp_num))
+                        list.add(Pair("android_id",scanResult!!))
                        // list.add(Pair("avatar",sImage))
                         HttpsTrustManager.allowAllSSL();
                         sendPostRequest(params = list, apiLink = "https://95i7arxys8.execute-api.ap-south-1.amazonaws.com/api/employee")
@@ -472,6 +531,7 @@ class enter_details : AppCompatActivity() {
 
 
     }
+
 }
 
 

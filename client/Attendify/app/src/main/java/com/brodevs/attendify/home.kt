@@ -1,11 +1,13 @@
 package com.brodevs.attendify
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.brodevs.attendify.model.FaceNetModel
 import com.brodevs.attendify.model.Models
 import kotlinx.coroutines.CoroutineScope
@@ -62,7 +64,11 @@ class home : AppCompatActivity(), CoroutineScope by MainScope() {
             startActivity(intent)
             //finish()
         }
-
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA),
+            1
+        )
 
         var entry_btn: View = findViewById(R.id.frame_3)
         entry_btn.setOnClickListener {

@@ -191,6 +191,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
             android:fontFamily="@font/rotaextrabold"
             android:text="Gender"
             android:textColor="#86ffffff"
@@ -199,8 +200,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/address"
-            app:layout_constraintVertical_bias="0.123" />
+            app:layout_constraintTop_toBottomOf="@+id/altAuthSetupBtn"
+            app:layout_constraintVertical_bias="0.0" />
 
         <Button
             android:id="@+id/button"
@@ -319,10 +320,47 @@
             app:layout_constraintTop_toBottomOf="@+id/imageView7"
             app:layout_constraintVertical_bias="0.0" />
 
+        <Button
+            android:id="@+id/altAuthSetupBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/white"
+
+            android:fontFamily="@font/rotabold"
+            android:text="Setup alternate authentication"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/address"
+            app:layout_constraintTop_toBottomOf="@+id/address" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
 
+    <com.budiyev.android.codescanner.CodeScannerView
+        android:id="@+id/scanner_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:autoFocusButtonColor="@android:color/white"
+        app:autoFocusButtonVisible="true"
+        app:flashButtonColor="@android:color/white"
+        app:flashButtonVisible="false"
+        app:frameAspectRatioHeight="1"
+        app:frameAspectRatioWidth="1"
+        app:frameColor="@android:color/white"
+        app:frameCornersRadius="0dp"
+        app:frameCornersSize="50dp"
+        app:frameSize="0.75"
+        app:frameThickness="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:maskColor="#77000000" />
     <include
         android:id="@+id/loading"
         layout="@layout/loading"
