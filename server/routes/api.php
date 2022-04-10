@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\AttendanceAreaController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -23,3 +25,4 @@ Route::get('employee',[EmployeeController::class,'get']);
 Route::get('employee/verify',[EmployeeController::class,'check']);
 Route::post('employee/entry',[EmployeeController::class,'makeEntry']);
 Route::post('employee/exit',[EmployeeController::class,'makeExit']);
+Route::post('area',[AttendanceAreaController::class,'update']);
